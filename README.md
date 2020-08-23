@@ -101,6 +101,7 @@ and if everything is OK service will return something like this
 
 If is 'id' in request:
 
+```sql
 {
     "get":{
         "type":"users",
@@ -110,9 +111,11 @@ If is 'id' in request:
         ]
     }    
 }
+```
 
 server should return single record:
 
+```sql
 {
     "meta": {
         "OK": true,
@@ -130,6 +133,7 @@ server should return single record:
         }
     }
 }
+```
 
 Every data table in the database should have 'id' field.
 
