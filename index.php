@@ -46,7 +46,7 @@ switch ($method) {
     }
   
 		//file_put_contents('inputDump.txt', 'In post method'.$input->phpFunction, FILE_APPEND);
-		// sleep(2); // time delay for debuging in the clients, blur testing in reactjs :)
+		// sleep(2); // time delay for debugging in the clients, blur testing in reactjs :)
   break;
   case 'PUT':
 	case 'GET':

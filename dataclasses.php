@@ -21,20 +21,18 @@ class get {
 	
 	function process(){
 		$data = [];
-		$attrib = '*';
+		$fields = '*';
 		$pagination = '';
 		$sorting = '';
 		
 		if(isset($this->inp->attributes)){
-			if( in_array( 'id', $this->inp->attributes ) ) 
-				$attrib = implode(',',$this->inp->attributes);
-			else
-				$attrib =	'id,'.implode(',',$this->inp->attributes);
+			$fields =	implode(',',$this->inp->attributes);
 		}	
 
 		if(isset($this->inp->type)){ 
+			
 			if(isset($this->inp->id)){ 
-				$sth = $this->conn->prepare("SELECT $attrib FROM ".$this->inp->type." WHERE `id` = :userId");
+				$sth = $this->conn->prepare("SELECT $fields FROM ".$this->inp->type." WHERE `id` = :userId");
 				$sth->bindParam('userId', $this->inp->id);
 			}	
 			else{
@@ -44,9 +42,9 @@ class get {
 					if( isset($this->inp->page) ){
 						$pagination = " LIMIT ".$this->inp->page->limit." OFFSET ".$this->inp->page->offset;
 					}
-					$sth = $this->conn->prepare("SELECT $attrib FROM ".$this->inp->type." WHERE 1 ".$sorting." ".$pagination  );
+					$sth = $this->conn->prepare("SELECT id, $fields FROM ".$this->inp->type." WHERE 1 ".$sorting." ".$pagination  );
 			}
-			
+
 		try{
 			$sth->execute();
 			if(isset($this->inp->id))
@@ -58,11 +56,18 @@ class get {
 			
 			$this->output = [];
 			
-			foreach( $result as $row ){
-				$dt['type'] = $this->inp->type;
-				$dt['id'] = $row->id;
-				$dt['attributes'] = $row;
-				array_push ( $data, $dt );
+			if(is_array($result))
+				foreach( $result as $row ){
+					$dt['type'] = $this->inp->type;
+					$dt['id'] = $row->id;
+					unset($row->id);
+					$dt['attributes'] = $row;
+					array_push ( $data, $dt );
+				}
+			else{
+				$data['type'] = $this->inp->type;
+				$data['id'] = $this->inp->id;
+				$data['attributes'] = $result;
 			}
 
 			$this->output['meta'] = [
