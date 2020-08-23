@@ -1,0 +1,15 @@
+{
+    "name": "ristep/php-json-api",
+    "description": "Simplest php-json-api",
+    "type": "library",
+    "require": {
+        "firebase/php-jwt": "^5.2"
+    },
+    "license": "mit",
+    "authors": [
+        {
+            "name": "ristep",
+            "email": "ristepan@gmail.com"
+        }
+    ]
+}
