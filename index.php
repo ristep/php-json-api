@@ -1,11 +1,12 @@
 <?php
 
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
-error_reporting(-1);
+// uncomment for debugging messages 
+// ini_set('display_startup_errors', 1);
+// ini_set('display_errors', 1);
+// error_reporting(-1);
 
 /* 
-** Headers are not tested quite well yet
+** this Headers are not tested quite well yet
 */
 header("Content-Type: application/vnd.api+json");
 header('Access-Control-Allow-Origin: *');

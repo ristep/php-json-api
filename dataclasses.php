@@ -13,7 +13,7 @@ class get {
 		$this->output = [
 			'OK' => false,
 			'error' => true,
-			'errorType' => 'Some undefined server ERROR!',
+			'errorType' => 'Undefined server ERROR!',
 			'code' => 500,
 			'message' => "Internal RPC server error!"
 		];
@@ -24,25 +24,40 @@ class get {
 		$fields = '*';
 		$pagination = '';
 		$sorting = '';
-		
+		$where = " WHERE 1 ";
+		$table = $this->inp->type;
+
 		if(isset($this->inp->attributes)){
 			$fields =	implode(',',$this->inp->attributes);
 		}	
 
 		if(isset($this->inp->type)){ 
-			
-			if(isset($this->inp->id)){ 
-				$sth = $this->conn->prepare("SELECT $fields FROM ".$this->inp->type." WHERE `id` = :userId");
+	
+			if(isset($this->inp->id)){
+				$sth = $this->conn->prepare("SELECT $fields FROM $table WHERE `id` = :userId ;");
 				$sth->bindParam('userId', $this->inp->id);
-			}	
+			}
 			else{
+					if(isset($this->inp->key)){
+						$whereArr = array();
+						foreach( $this->inp->key as $key => $val )
+							array_push($whereArr, "$key='$val'");
+						$where = "WHERE " . implode(' and ', $whereArr);
+						// print($where);
+					}else
+						if(isset($this->inp->filter)){
+							if(is_string($this->inp->filter))
+								$where = "WHERE ".$this->inp->filter;
+					}
+
 					if(isset($this->inp->sort)){
 						$sorting = " ORDER BY ".implode(',',$this->inp->sort);
 					}
+
 					if( isset($this->inp->page) ){
 						$pagination = " LIMIT ".$this->inp->page->limit." OFFSET ".$this->inp->page->offset;
 					}
-					$sth = $this->conn->prepare("SELECT id, $fields FROM ".$this->inp->type." WHERE 1 ".$sorting." ".$pagination  );
+					$sth = $this->conn->prepare("SELECT id, $fields FROM $table $where $sorting $pagination;");
 			}
 
 		try{
@@ -51,8 +66,6 @@ class get {
 				$result = $sth->fetch(PDO::FETCH_OBJ);
 			else
 				$result = $sth->fetchAll(PDO::FETCH_OBJ);
-			$sth2 = $this->conn->prepare('SHOW FIELDS FROM users');
-			$sth2->execute();
 			
 			$this->output = [];
 			
