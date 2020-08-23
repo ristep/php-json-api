@@ -99,9 +99,45 @@ and if everything is OK service will return something like this
 }
 ```
 
+If is 'id' in request:
+
+{
+    "get":{
+        "type":"users",
+        "id":5, 
+        "attributes":[
+            "name","first_name","second_name","email","place"
+        ]
+    }    
+}
+
+server should return single record:
+
+{
+    "meta": {
+        "OK": true,
+        "count": 1
+    },
+    "data": {
+        "type": "users",
+        "id": 5,
+        "attributes": {
+            "name": "mavro",
+            "first_name": "Mavricie",
+            "second_name": "Mavrovskic",
+            "email": "nema@gmail.com",
+            "place": "Маврово"
+        }
+    }
+}
+
+Every data table in the database should have 'id' field.
+
 ## Examples
 
-For live example go to this link:
+For live example and the complete documentation  go to this link:
+
+(yet to be done)
 
 >
 > <a href="https://jsonApi-test.sman.cloud/" target="_blank">jsonApi-test.sman.cloud</a>
