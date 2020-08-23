@@ -104,7 +104,7 @@ and if everything is OK service will return something like this
 
 If is 'id' in request:
 
-```sql
+```json
 {
     "get":{
         "type":"users",
@@ -118,7 +118,7 @@ If is 'id' in request:
 
 server should return single record:
 
-```sql
+```json
 {
     "meta": {
         "OK": true,
