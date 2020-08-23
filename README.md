@@ -23,11 +23,14 @@ Run composer in the project directory.
 composer will download "firebase/php-jwt" in /vendor folder. 
 
 If you don't need authentication and tokens just comment the corresponding line in index.php.
->
->$tokenData = false;
->
->//$tokenData = require_once('tokening.php'); // for user validation uncomment
 
+```php
+
+$tokenData = false;
+
+//$tokenData = require_once('tokening.php'); // for user validation uncomment
+
+```
 
 ## Prerequisites
 
