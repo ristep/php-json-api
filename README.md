@@ -102,7 +102,7 @@ and if everything is OK service will return something like this
 }
 ```
 
-If is 'id' in request:
+If there is an 'id' tag in the request:
 
 ```json
 {
