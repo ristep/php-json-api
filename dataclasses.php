@@ -114,4 +114,98 @@ class get {
 
 }
 
+class post {
+	private $inp;
+	private $output;
+	private $conn;
+	private $tokenData;
+
+	function __construct($inp, $conn, $tokenData) {
+		$this->inp = $inp;
+		$this->conn = $conn;
+		$this->tokenData = $tokenData;
+		$this->output = [
+			'OK' => false,
+			'error' => true,
+			'errorType' => 'Undefined server ERROR!',
+			'code' => 500,
+			'message' => "Internal RPC server error!"
+		];
+	}
+
+	function process(){
+		$this->output = $this->inp;
+		return $this;
+	}
+	
+	function result(){
+		//$this->process();
+		return ($this->output);
+	}
+	
+}
+
+class patch {
+	private $inp;
+	private $output;
+	private $conn;
+	private $tokenData;
+
+	function __construct($inp, $conn, $tokenData) {
+		$this->inp = $inp;
+		$this->conn = $conn;
+		$this->tokenData = $tokenData;
+		$this->output = [
+			'OK' => false,
+			'error' => true,
+			'errorType' => 'Undefined server ERROR!',
+			'code' => 500,
+			'message' => "Internal RPC server error!"
+		];
+	}
+
+	function process(){
+		$this->output = $this->inp;
+		return $this;
+	}
+	
+	function result(){
+		//$this->process();
+		return ($this->output);
+	}
+	
+}
+
+class delete {
+	private $inp;
+	private $output;
+	private $conn;
+	private $tokenData;
+
+	function __construct($inp, $conn, $tokenData) {
+		$this->inp = $inp;
+		$this->conn = $conn;
+		$this->tokenData = $tokenData;
+		$this->output = [
+			'OK' => false,
+			'error' => true,
+			'errorType' => 'Undefined server ERROR!',
+			'code' => 500,
+			'message' => "Internal RPC server error!"
+		];
+	}
+
+	function process(){
+		$this->output = $this->inp;
+		return $this;
+	}
+	
+	function result(){
+		//$this->process();
+		return ($this->output);
+	}
+	
+}
+
+
 ?>
