@@ -36,7 +36,7 @@ $tokenData = false;
 
 MySQL, PHP with PDO enabled on an apache2 webserver. Probably will work on eny http sever with PHP but is not tested, yet.
 
-Full source code for testing app can be found here ong github [ristep/json-api-react-test](https://github.com/ristep/json-api-react-test)
+Full source code for testing app can be found here on github [ristep/php-json-api-test-app](https://github.com/ristep/php-json-api-test-app)
 
 ## Using
 
