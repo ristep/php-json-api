@@ -34,20 +34,20 @@ class get {
 		if(isset($this->inp->type)){ 
 	
 			if(isset($this->inp->id)){
-				$sth = $this->conn->prepare("SELECT $fields FROM $table WHERE `id` = :userId ;");
-				$sth->bindParam('userId', $this->inp->id);
+				$sth = $this->conn->prepare("SELECT $fields FROM $table WHERE `id` = :recordID ;");
+				$sth->bindParam('recordID', $this->inp->id);
 			}
 			else{
 					if(isset($this->inp->key)){
 						$whereArr = array();
 						foreach( $this->inp->key as $key => $val )
 							array_push($whereArr, "$key='$val'");
-						$where = "WHERE " . implode(' and ', $whereArr);
+						$where = "WHERE " . implode(' and ', $whereArr); // Security to do: SQL injection preventing
 						// print($where);
 					}else
 						if(isset($this->inp->filter)){
 							if(is_string($this->inp->filter))
-								$where = "WHERE ".$this->inp->filter;
+								$where = "WHERE ".$this->inp->filter; // Security to do: SQL injection preventing
 					}
 
 					if(isset($this->inp->sort)){
@@ -55,7 +55,9 @@ class get {
 					}
 
 					if( isset($this->inp->page) ){
-						$pagination = " LIMIT ".$this->inp->page->limit." OFFSET ".$this->inp->page->offset;
+						$lim = (int) $this->inp->page->limit;
+						$off = (int) $this->inp->page->offset;
+						$pagination = "LIMIT $lim OFFSET $off;";
 					}
 					$sth = $this->conn->prepare("SELECT id, $fields FROM $table $where $sorting $pagination;");
 			}
@@ -97,7 +99,6 @@ class get {
 					'code' => 416,
 					'message' => "Data Base Error!",
 					'PDO' => $e,
-					"userData" => false
 				];
 
 			}		
@@ -134,10 +135,43 @@ class post {
 	}
 
 	function process(){
-		$this->output = $this->inp;
+			
+			$atrArr = array();
+			$parArr = array();
+
+			foreach( $this->inp->attributes as $key => $val ){
+				array_push($atrArr, $key );
+				array_push($parArr,':'.$key );
+			}	
+			$sth = $this->conn->prepare("INSERT INTO ".$this->inp->type."(".implode(',', $atrArr).") VALUES(".implode( ',', $parArr).");");
+			
+			try{
+
+				$sth->execute((array)($this->inp->attributes));
+				$temp = 
+				$this->output = [];
+				$this->output['meta'] = [
+					'OK' => true,
+					'count' => $sth->rowCount(),
+					'message' => "Inserted!",
+					'recordID' => $this->conn->lastInsertId()
+				];
+	
+			} catch (PDOException $e) {
+	
+				$this->output = [
+					'OK' => false,
+					'errorType' => 'DataBase',
+					'code' => 416,
+					'message' => "Data Base Error!",
+					'PDO' => $e,
+					"userData" => false
+				];
+			}			
+
 		return $this;
 	}
-	
+
 	function result(){
 		//$this->process();
 		return ($this->output);
@@ -149,7 +183,7 @@ class patch {
 	private $inp;
 	private $output;
 	private $conn;
-	private $tokenData;
+	private $tokenData; 
 
 	function __construct($inp, $conn, $tokenData) {
 		$this->inp = $inp;
@@ -165,10 +199,42 @@ class patch {
 	}
 
 	function process(){
-		$this->output = $this->inp;
+		if(isset($this->inp->id)){
+			
+			$setArr = array();
+			foreach( $this->inp->attributes as $key => $val )
+				array_push($setArr, " $key=:$key");
+			$sth = $this->conn->prepare("UPDATE ".$this->inp->type." SET ".implode(',', $setArr)." WHERE `id` = :recordID ;");
+			try{
+				$parArr = (array)($this->inp->attributes);
+				$parArr['recordID'] = $this->inp->id;
+				$sth->execute($parArr);
+				$this->output = [];
+				$this->output['meta'] = [
+					'OK' => true,
+					'count' => $sth->rowCount(),
+					'message' => "Patched!",
+				];
+	
+			} catch (PDOException $e) {
+	
+				$this->output = [
+					'OK' => false,
+					'errorType' => 'DataBase',
+					'code' => 416,
+					'message' => "Data Base Error!",
+					'PDO' => $e
+				];
+			}			
+		}
+		else{
+			$this->output["message"]  = "Attribute ID must be specified!!";
+			$this->output["errorType"] = "Missing key parameter in request!";
+			$this->output["code"] = 508;
+		}	
 		return $this;
 	}
-	
+
 	function result(){
 		//$this->process();
 		return ($this->output);
@@ -196,9 +262,37 @@ class delete {
 	}
 
 	function process(){
-		$this->output = $this->inp;
-		return $this;
-	}
+		if(isset($this->inp->id)){
+			
+			$setArr = array();
+			$sth = $this->conn->prepare("DELETE FROM ".$this->inp->type." WHERE `id` = :recordID ;");
+			try{
+				$parArr['recordID'] = $this->inp->id;
+				$sth->execute($parArr);
+				$this->output = [];
+				$this->output['meta'] = [
+					'OK' => true,
+					'count' => $sth->rowCount(),
+					'message' => $sth->rowCount()." deleted records!"
+				];
+	
+			} catch (PDOException $e) {
+	
+				$this->output = [
+					'OK' => false,
+					'errorType' => 'DataBase',
+					'code' => 416,
+					'message' => "Data Base Error!",
+					'PDO' => $e,
+				];
+			}			
+		}
+		else{
+			$this->output["message"]  = "Attribute ID must be specified!!";
+			$this->output["errorType"] = "Missing key parameter in request!";
+			$this->output["code"] = 508;
+		}	
+		return $this;	}
 	
 	function result(){
 		//$this->process();
