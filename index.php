@@ -1,9 +1,9 @@
 <?php
 
 // uncomment for debugging messages 
-// ini_set('display_startup_errors', 1);
-// ini_set('display_errors', 1);
-// error_reporting(-1);
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(-1);
 
 /* 
 ** this Headers are not tested quite well yet
@@ -37,6 +37,16 @@ switch ($method) {
     if(isset($input->get)){
       $ret = (new get($input->get, $cn, $tokenData))->process()->result();
     }
+    elseif(isset($input->post)){
+      $ret = (new post($input->post, $cn, $tokenData))->process()->result();
+    }
+    elseif(isset($input->patch)){
+      $ret = (new patch($input->patch, $cn, $tokenData))->process()->result();
+    }
+    elseif(isset($input->delete)){
+      $ret = (new delete($input->delete, $cn, $tokenData))->process()->result();
+    }
+
     else{
       $ret = (object)[
         'OK' => false,
