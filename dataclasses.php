@@ -1,5 +1,9 @@
 <?php
 
+require "./vendor/autoload.php";
+use \Firebase\JWT\JWT;
+
+
 class get {
 	private $inp;
 	private $output;
@@ -264,7 +268,7 @@ class delete {
 	function process(){
 		if(isset($this->inp->id)){
 			
-			$setArr = array();
+			$parArr = array();
 			$sth = $this->conn->prepare("DELETE FROM ".$this->inp->type." WHERE `id` = :recordID ;");
 			try{
 				$parArr['recordID'] = $this->inp->id;
@@ -301,5 +305,86 @@ class delete {
 	
 }
 
+class getToken {
+	private $inp;
+	private $output;
+	private $conn;
+	private $tokenData;
+
+	function __construct($inp, $conn, $tokenData) {
+		$this->inp = $inp;
+		$this->conn = $conn;
+		$this->tokenData = $tokenData;
+		$this->output = [
+			'OK' => false,
+			'error' => true,
+			'errorType' => 'Undefined server ERROR!',
+			'code' => 500,
+			'message' => "Internal RPC server error!"
+		];
+	}
+
+	function process(){
+		if(isset($this->inp->username) && isset($this->inp->password) ){
+			
+			$parArr = [];
+			$sth = $this->conn->prepare("select id,name,email,first_name,second_name,role FROM `users`  WHERE name = :username and password = :password;");
+			try{
+				$parArr['password'] = $this->inp->password;
+				$parArr['username'] = $this->inp->username;
+				$sth->execute($parArr);
+				$result = $sth->fetch(PDO::FETCH_OBJ);
+
+				$token = array(
+					"id" => $result->id,
+					"name" => $result->name,
+					"email" => $result->email,
+					"first_name" => $result->first_name,
+					"second_name" => $result->second_name,
+					// "address" => $result->address,
+					// "state" => $result->state,
+					// "place" => $result->place,
+					"role" => $result->role,
+					// 'time' => date("ymdHms"),
+					"jti" => 'deca-meca-'.date("ymdhms").'-jade-'.mt_rand().'-'
+				);
+				
+				$jwt = JWT::encode($token, md5("FMyNTY2iLCJ0e2X5".date("ymd")));
+				// sleep(2);
+
+				$token['jti'] = date("y-m-d H:m:s");
+				$token['auToken'] = $jwt;
+
+				$this->output = [];
+				$this->output['meta'] = [
+					'OK' => true,
+					'count' => $sth->rowCount(),
+					'message' => "User record found! User password OK! UserToken generated!",
+				];
+				$this->output['data'] = $token;
+	
+			} catch (PDOException $e) {
+	
+				$this->output = [
+					'OK' => false,
+					'errorType' => 'DataBase',
+					'code' => 416,
+					'message' => "Data Base Error!",
+					'PDO' => $e,
+				];
+			}			
+		}
+		else{
+			$this->output["message"]  = "Attribute password and username must be specified!!";
+			$this->output["errorType"] = "Missing key parameter in request!";
+			$this->output["code"] = 508;
+		}	
+		return $this;	}
+	
+	function result(){
+		//$this->process();
+		return ($this->output);
+	}
+}
 
 ?>

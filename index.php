@@ -46,6 +46,9 @@ switch ($method) {
     elseif(isset($input->delete)){
       $ret = (new delete($input->delete, $cn, $tokenData))->process()->result();
     }
+    elseif(isset($input->getToken)){
+      $ret = (new getToken($input->getToken, $cn, $tokenData))->process()->result();
+    }
 
     else{
       $ret = (object)[
