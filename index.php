@@ -19,8 +19,10 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Author
 // some illuminations here https://smanzary.sman.cloud/cors-nightmare-in-spa-applications/
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') die();
  
-$cn = require "conn.php";
+require_once "conn.php";
 require_once "json_data.class.php";
+
+$cn = new connection; 
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -31,32 +33,18 @@ $input = json_decode($input);
 switch ($method) {
 	case 'POST': // update, insert, delete and select 
     
-    if(isset($input->get)){
-      $ret = (new get($input->get, $cn))->process()->result();
-    }
-    elseif(isset($input->post)){
-      $ret = (new post($input->post, $cn))->process()->result();
-    }
-    elseif(isset($input->patch)){
-      $ret = (new patch($input->patch, $cn))->process()->result();
-    }
-    elseif(isset($input->delete)){
-      $ret = (new delete($input->delete, $cn))->process()->result();
-    }
-    elseif(isset($input->getToken)){
-      $ret = (new getToken($input->getToken, $cn))->process()->result();
-    }
+      $type = Key($input);
+      if (class_exists($type)) {
+        $ret = (new $type($input->$type, $cn->conn))->process()->result();
+      }else{  
+        $ret = (object)[
+          'OK' => false,
+          'error' => true,
+          'message' => "Undefined Request Method !!!",
+          'data' => false
+        ];
+      };
 
-    else{
-      $ret = (object)[
-        'OK' => false,
-        'error' => true,
-        'message' => "Undefined Request Method !!!",
-        'data' => false
-      ];
-    }
-  
-		//file_put_contents('inputDump.txt', 'In post method'.$input->phpFunction, FILE_APPEND);
 		// sleep(2); // time delay for debugging in the clients, blur testing in reactjs :)
   break;
   case 'PUT':
