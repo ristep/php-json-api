@@ -19,44 +19,32 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Author
 // some illuminations here https://smanzary.sman.cloud/cors-nightmare-in-spa-applications/
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') die();
  
-$cn = require "conn.php";
-require_once "dataclasses.php";
+require_once "conn.php";
+require_once "json_data.class.php";
+
+$cn = new connection; 
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 $input  = file_get_contents("php://input");
-// file_put_contents('inputDump.txt', $input, FILE_APPEND); // uncomment for debugging
+//file_put_contents('inputDump.txt', $input, FILE_APPEND); // uncomment for debugging
 $input = json_decode($input);
-
-$tokenData = false;
-//$tokenData = require_once('tokening.php'); // for user validation uncomment
 
 switch ($method) {
 	case 'POST': // update, insert, delete and select 
     
-    if(isset($input->get)){
-      $ret = (new get($input->get, $cn, $tokenData))->process()->result();
-    }
-    elseif(isset($input->post)){
-      $ret = (new post($input->post, $cn, $tokenData))->process()->result();
-    }
-    elseif(isset($input->patch)){
-      $ret = (new patch($input->patch, $cn, $tokenData))->process()->result();
-    }
-    elseif(isset($input->delete)){
-      $ret = (new delete($input->delete, $cn, $tokenData))->process()->result();
-    }
+      $type = Key($input);
+      if (class_exists($type)) {
+        $ret = (new $type($input->$type, $cn->conn))->process()->result();
+      }else{  
+        $ret = (object)[
+          'OK' => false,
+          'error' => true,
+          'message' => "Undefined Request Method !!!",
+          'data' => false
+        ];
+      };
 
-    else{
-      $ret = (object)[
-        'OK' => false,
-        'error' => true,
-        'message' => "Undefined Request Method !!!",
-        'data' => false
-      ];
-    }
-  
-		//file_put_contents('inputDump.txt', 'In post method'.$input->phpFunction, FILE_APPEND);
 		// sleep(2); // time delay for debugging in the clients, blur testing in reactjs :)
   break;
   case 'PUT':
