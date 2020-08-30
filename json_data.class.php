@@ -8,12 +8,10 @@ class get {
 	private $inp;
 	private $output;
 	private $conn;
-	private $tokenData;
 
-	function __construct($inp, $conn, $tokenData) {
+	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
-		$this->tokenData = $tokenData;
 		$this->output = [
 			'OK' => false,
 			'error' => true,
@@ -23,8 +21,9 @@ class get {
 		];
 	}
 	
-	function process(){
+	public function process(){
 		$data = [];
+		$parArr = [];
 		$fields = '*';
 		$pagination = '';
 		$sorting = '';
@@ -39,15 +38,16 @@ class get {
 	
 			if(isset($this->inp->id)){
 				$sth = $this->conn->prepare("SELECT $fields FROM $table WHERE `id` = :recordID ;");
-				$sth->bindParam('recordID', $this->inp->id);
+				$parArr['recordID']= $this->inp->id;
 			}
 			else{
 					if(isset($this->inp->key)){
 						$whereArr = array();
-						foreach( $this->inp->key as $key => $val )
-							array_push($whereArr, "$key='$val'");
-						$where = "WHERE " . implode(' and ', $whereArr); // Security to do: SQL injection preventing
-						// print($where);
+						foreach( $this->inp->key as $key => $val ){
+							array_push($whereArr, "$key=:$key");
+							$parArr[$key] = $val;
+						}
+						$where = "WHERE " . implode(' and ', $whereArr); 
 					}else
 						if(isset($this->inp->filter)){
 							if(is_string($this->inp->filter))
@@ -59,15 +59,17 @@ class get {
 					}
 
 					if( isset($this->inp->page) ){
-						$lim = (int) $this->inp->page->limit;
-						$off = (int) $this->inp->page->offset;
-						$pagination = "LIMIT $lim OFFSET $off;";
+						$parArr['limit']  = (int) $this->inp->page->limit;
+						$parArr['offset'] = (int) $this->inp->page->offset;
+						$pagination = "LIMIT :limit OFFSET :offset";
+						$this->conn->setAttribute( PDO::ATTR_EMULATE_PREPARES, false );
 					}
-					$sth = $this->conn->prepare("SELECT id, $fields FROM $table $where $sorting $pagination;");
+
+					$sth = $this->conn->prepare("SELECT $fields FROM $table $where $sorting $pagination;");
 			}
 
 		try{
-			$sth->execute();
+			$sth->execute($parArr);
 			if(isset($this->inp->id))
 				$result = $sth->fetch(PDO::FETCH_OBJ);
 			else
@@ -78,7 +80,8 @@ class get {
 			if(is_array($result))
 				foreach( $result as $row ){
 					$dt['type'] = $this->inp->type;
-					$dt['id'] = $row->id;
+					if(isset($row->id))
+						$dt['id'] = $row->id;
 					unset($row->id);
 					$dt['attributes'] = $row;
 					array_push ( $data, $dt );
@@ -110,7 +113,7 @@ class get {
 		return $this;
 	}
 	
-	function result(){
+	public function result(){
 		//$this->process();
 		return ($this->output);
 	}
@@ -123,12 +126,10 @@ class post {
 	private $inp;
 	private $output;
 	private $conn;
-	private $tokenData;
 
-	function __construct($inp, $conn, $tokenData) {
+	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
-		$this->tokenData = $tokenData;
 		$this->output = [
 			'OK' => false,
 			'error' => true,
@@ -138,7 +139,7 @@ class post {
 		];
 	}
 
-	function process(){
+	public function process(){
 			
 			$atrArr = array();
 			$parArr = array();
@@ -176,7 +177,7 @@ class post {
 		return $this;
 	}
 
-	function result(){
+	public function result(){
 		//$this->process();
 		return ($this->output);
 	}
@@ -187,12 +188,10 @@ class patch {
 	private $inp;
 	private $output;
 	private $conn;
-	private $tokenData; 
 
-	function __construct($inp, $conn, $tokenData) {
+	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
-		$this->tokenData = $tokenData;
 		$this->output = [
 			'OK' => false,
 			'error' => true,
@@ -202,7 +201,7 @@ class patch {
 		];
 	}
 
-	function process(){
+	public function process(){
 		if(isset($this->inp->id)){
 			
 			$setArr = array();
@@ -239,7 +238,7 @@ class patch {
 		return $this;
 	}
 
-	function result(){
+	public function result(){
 		//$this->process();
 		return ($this->output);
 	}
@@ -250,12 +249,10 @@ class delete {
 	private $inp;
 	private $output;
 	private $conn;
-	private $tokenData;
 
-	function __construct($inp, $conn, $tokenData) {
+	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
-		$this->tokenData = $tokenData;
 		$this->output = [
 			'OK' => false,
 			'error' => true,
@@ -265,7 +262,7 @@ class delete {
 		];
 	}
 
-	function process(){
+	public function process(){
 		if(isset($this->inp->id)){
 			
 			$parArr = array();
@@ -298,7 +295,7 @@ class delete {
 		}	
 		return $this;	}
 	
-	function result(){
+		public function result(){
 		//$this->process();
 		return ($this->output);
 	}
@@ -309,12 +306,10 @@ class getToken {
 	private $inp;
 	private $output;
 	private $conn;
-	private $tokenData;
 
-	function __construct($inp, $conn, $tokenData) {
+	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
-		$this->tokenData = $tokenData;
 		$this->output = [
 			'OK' => false,
 			'error' => true,
@@ -324,7 +319,7 @@ class getToken {
 		];
 	}
 
-	function process(){
+	public function process(){
 		if(isset($this->inp->username) && isset($this->inp->password) ){
 			
 			$parArr = [];
@@ -335,34 +330,47 @@ class getToken {
 				$sth->execute($parArr);
 				$result = $sth->fetch(PDO::FETCH_OBJ);
 
-				$token = array(
-					"id" => $result->id,
-					"name" => $result->name,
-					"email" => $result->email,
-					"first_name" => $result->first_name,
-					"second_name" => $result->second_name,
-					// "address" => $result->address,
-					// "state" => $result->state,
-					// "place" => $result->place,
-					"role" => $result->role,
-					// 'time' => date("ymdHms"),
-					"jti" => 'deca-meca-'.date("ymdhms").'-jade-'.mt_rand().'-'
-				);
-				
-				$jwt = JWT::encode($token, md5("FMyNTY2iLCJ0e2X5".date("ymd")));
-				// sleep(2);
+				if($sth->rowCount()==1){
+					$token = array(
+						"id" => $result->id,
+						"name" => $result->name,
+						"email" => $result->email,
+						"first_name" => $result->first_name,
+						"second_name" => $result->second_name,
+						// "address" => $result->address,
+						// "state" => $result->state,
+						// "place" => $result->place,
+						"role" => $result->role,
+						// 'time' => date("ymdHms"),
+						"jti" => 'deca-meca-'.date("ymdhms").'-jade-'.mt_rand().'-'
+					);
+					
+					$jwt = JWT::encode($token, md5("FMyNTYiLCJ0eX5".date("ymd")));
+					// sleep(2);
 
-				$token['jti'] = date("y-m-d H:m:s");
-				$token['auToken'] = $jwt;
+					$token['jti'] = date("y-m-d H:m:s");
+					$token['auToken'] = $jwt;
 
-				$this->output = [];
-				$this->output['meta'] = [
-					'OK' => true,
-					'count' => $sth->rowCount(),
-					'message' => "User record found! User password OK! UserToken generated!",
-				];
-				$this->output['data'] = $token;
-	
+					$this->output = [];
+					$this->output['meta'] = [
+						'OK' => true,
+						'error' => false,
+						'count' => $sth->rowCount(),
+						'message' => "User record found! User password OK! UserToken generated!",
+					];
+					$this->output['data'] = $token;
+				}else{
+					$this->output = [];
+					$this->output['meta'] = [
+						'OK' => false,
+						'error' => true,
+						'errorCode' => 401,
+						'count' => 0,
+						'message' => "Wrong username or password!!! Cant get UserToken!",
+					];
+					$this->output['data'] = false;
+				}
+
 			} catch (PDOException $e) {
 	
 				$this->output = [
@@ -381,7 +389,7 @@ class getToken {
 		}	
 		return $this;	}
 	
-	function result(){
+		public function result(){
 		//$this->process();
 		return ($this->output);
 	}

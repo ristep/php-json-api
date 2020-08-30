@@ -1,8 +1,9 @@
 <?php
 require "./vendor/autoload.php";
 use \Firebase\JWT\JWT;
-//$skey = md5("FMyNTYiLCJ0eX5180112");
-$skey = md5("FMyNTYiLCJ0eX5".date("ymd"));
+
+// $vlad = md5("FMyNTYiLCJ0eX5180112");   
+$vlad = md5("FMyNTYiLCJ0eX5".date("ymd"));
 
 if($_SERVER['REQUEST_METHOD']=='OPTIONS') die();
 
@@ -31,7 +32,7 @@ else{
 }	
 
 try{
-	$decoded = JWT::decode($token	,$skey, ['HS256']);
+	$decoded = JWT::decode($token	,$vlad, ['HS256']);
 }
 catch(Exception $err) {
 	echoErr(  (object)[ 'error' => 'tokenator', 'code' => 401, 'message' => 'Unauthorized, bad token!!'  ] );

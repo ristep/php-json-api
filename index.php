@@ -20,34 +20,31 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Author
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') die();
  
 $cn = require "conn.php";
-require_once "dataclasses.php";
+require_once "json_data.class.php";
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 $input  = file_get_contents("php://input");
-// file_put_contents('inputDump.txt', $input, FILE_APPEND); // uncomment for debugging
+//file_put_contents('inputDump.txt', $input, FILE_APPEND); // uncomment for debugging
 $input = json_decode($input);
-
-$tokenData = false;
-//$tokenData = require_once('tokening.php'); // for user validation uncomment
 
 switch ($method) {
 	case 'POST': // update, insert, delete and select 
     
     if(isset($input->get)){
-      $ret = (new get($input->get, $cn, $tokenData))->process()->result();
+      $ret = (new get($input->get, $cn))->process()->result();
     }
     elseif(isset($input->post)){
-      $ret = (new post($input->post, $cn, $tokenData))->process()->result();
+      $ret = (new post($input->post, $cn))->process()->result();
     }
     elseif(isset($input->patch)){
-      $ret = (new patch($input->patch, $cn, $tokenData))->process()->result();
+      $ret = (new patch($input->patch, $cn))->process()->result();
     }
     elseif(isset($input->delete)){
-      $ret = (new delete($input->delete, $cn, $tokenData))->process()->result();
+      $ret = (new delete($input->delete, $cn))->process()->result();
     }
     elseif(isset($input->getToken)){
-      $ret = (new getToken($input->getToken, $cn, $tokenData))->process()->result();
+      $ret = (new getToken($input->getToken, $cn))->process()->result();
     }
 
     else{
