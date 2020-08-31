@@ -3,12 +3,21 @@
 require "./vendor/autoload.php";
 use \Firebase\JWT\JWT;
 
-
+/**
+ * get
+ */
 class get {
 	private $inp;
 	private $output;
 	private $conn;
-
+	
+	/**
+	 * __construct
+	 *
+	 * @param  mixed $inp
+	 * @param  mixed $conn
+	 * @return void
+	 */
 	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
@@ -20,7 +29,12 @@ class get {
 			'message' => "Internal RPC server error!"
 		];
 	}
-	
+		
+	/**
+	 * process
+	 *
+	 * @return {this}
+	 */
 	public function process(){
 		$data = [];
 		$parArr = [];
@@ -112,21 +126,35 @@ class get {
 		}
 		return $this;
 	}
-	
+		
+	/**
+	 * result
+	 *
+	 * @return Data object
+	 */
 	public function result(){
 		//$this->process();
 		return ($this->output);
 	}
 
-// Methods	
-
 }
 
+/**
+ * post
+ */
 class post {
 	private $inp;
 	private $output;
 	private $conn;
-
+	
+	/**
+	 * Method __construct
+	 *
+	 * @param $inp  // Input object from post data
+	 * @param $conn // Conection to be used
+	 *
+	 * @return void
+	 */
 	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
@@ -138,7 +166,12 @@ class post {
 			'message' => "Internal RPC server error!"
 		];
 	}
-
+	
+	/**
+	 * Method process
+	 *
+	 * @return {this}
+	 */
 	public function process(){
 			
 			$atrArr = array();
@@ -176,19 +209,34 @@ class post {
 
 		return $this;
 	}
-
+	
+	/**
+	 * Method result
+	 *
+	 * @return [output object]
+	 */
 	public function result(){
-		//$this->process();
 		return ($this->output);
 	}
 	
 }
 
+/**
+ * patch
+ */
 class patch {
 	private $inp;
 	private $output;
 	private $conn;
-
+	
+	/**
+	 * Method __construct
+	 *
+	 * @param $inp  [input object from post data]
+	 * @param $conn  [ PDO connection ]
+	 *
+	 * @return void
+	 */
 	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
@@ -200,7 +248,12 @@ class patch {
 			'message' => "Internal RPC server error!"
 		];
 	}
-
+	
+	/**
+	 * Method process
+	 *
+	 * @return this class
+	 */
 	public function process(){
 		if(isset($this->inp->id)){
 			
@@ -237,19 +290,35 @@ class patch {
 		}	
 		return $this;
 	}
-
+	
+	/**
+	 * Method result
+	 *
+	 * @return [resulting object]
+	 */
 	public function result(){
-		//$this->process();
 		return ($this->output);
 	}
 	
 }
 
+/**
+ * delete
+ */
 class delete {
+
 	private $inp;
 	private $output;
 	private $conn;
-
+	
+	/**
+	 * Method __construct
+	 *
+	 * @param $inp  [input object from post data]
+	 * @param $conn  [ PDO connection ]
+	 *
+	 * @return [this class]
+	 */
 	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
@@ -293,20 +362,37 @@ class delete {
 			$this->output["errorType"] = "Missing key parameter in request!";
 			$this->output["code"] = 508;
 		}	
-		return $this;	}
-	
-		public function result(){
-		//$this->process();
+		return $this;	
+	}
+			
+	/**
+	 * Method result
+	 *
+	 * @return [result object]
+	 */
+	public function result(){
 		return ($this->output);
 	}
 	
 }
 
+/**
+ * getToken 
+ * request for user token
+ */
 class getToken {
 	private $inp;
 	private $output;
 	private $conn;
 
+	/**
+	 * Method __construct
+	 *
+	 * @param $inp  [input object from post data]
+	 * @param $conn  [ PDO connection
+	 *
+	 * @return void
+	 */
 	function __construct($inp, $conn) {
 		$this->inp = $inp;
 		$this->conn = $conn;
@@ -318,7 +404,12 @@ class getToken {
 			'message' => "Internal RPC server error!"
 		];
 	}
-
+	
+	/**
+	 * Method process
+	 *
+	 * @return [this object]
+	 */
 	public function process(){
 		if(isset($this->inp->username) && isset($this->inp->password) ){
 			
@@ -387,10 +478,15 @@ class getToken {
 			$this->output["errorType"] = "Missing key parameter in request!";
 			$this->output["code"] = 508;
 		}	
-		return $this;	}
-	
-		public function result(){
-		//$this->process();
+		return $this;	
+	}
+		
+	/**
+	 * Method result
+	 *
+	 * @return [token data object]
+	 */
+	public function result(){
 		return ($this->output);
 	}
 }
