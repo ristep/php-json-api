@@ -14,21 +14,17 @@ if(isset($head['Authorization'])){
 	$token = $head['Authorization'];
 }
 else{
-	if(isset($_GET['au-token'])){
-		$token = $_GET['au-token'];
+	if(isset($_POST['au-token'])){
+		$token = $_POST['au-token'];
 	}
 	else
-		if(isset($_POST['au-token'])){
-			$token = $_POST['au-token'];
+		if(isset($input->au_token)){
+			$token = $input->au_token;
+		}	
+		else{	
+			echoErr(  (object)[ 'error' => 'tokenator', 'code' => 401, 'message' => 'Unauthorized, unknown user!!'  ] );
+			// die();
 		}
-		else
-			if(isset($input->au_token)){
-				$token = $input->au_token;
-			}	
-			else{	
-				echoErr(  (object)[ 'error' => 'tokenator', 'code' => 401, 'message' => 'Unauthorized, unknown user!!'  ] );
-				die();
-			}
 }	
 
 try{
