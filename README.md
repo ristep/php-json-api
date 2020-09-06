@@ -45,7 +45,7 @@ Just send post request whit JSON encoded Data
 ```js
 // Example request JSON
 {
-    "get":{
+    "Get":{
         "type":"users",
         "filter":{
             "email like": "%gmail.com"
@@ -77,26 +77,20 @@ and if everything is OK service will return something like this
     },
     "data": [
         {
-            "type": "users",
-            "id": 3,
-            "attributes": {
-                "name": "admin",
-                "first_name": "Root Admin",
-                "second_name": "Adminov",
-                "email": "addm@localhost.com",
-                "place": "Кавадарци"
-            }
+           "id": 3,
+           "name": "admin",
+           "first_name": "Root Admin",
+           "second_name": "Adminov",
+           "email": "addm@localhost.com",
+           "place": "Кавадарци"
         },
         {
-            "type": "users",
             "id": 5,
-            "attributes": {
-                "name": "mavro",
-                "first_name": "Mavricie",
-                "second_name": "Mavrovskic",
-                "email": "nema@gmail.com",
-                "place": "Маврово"
-            }
+            "name": "mavro",
+            "first_name": "Mavricie",
+            "second_name": "Mavrovskic",
+            "email": "nema@gmail.com",
+            "place": "Маврово"
         }
     ]
 }
@@ -120,19 +114,15 @@ server should return single record:
 
 ```json
 {
-    "meta": {
-        "OK": true,
-        "count": 1
-    },
+    "OK": true,
+   "count": 1,
     "data": {
-        "type": "users",
         "id": 5,
-        "attributes": {
-            "name": "mavro",
-            "first_name": "Mavricie",
-            "second_name": "Mavrovskic",
-            "email": "nema@gmail.com",
-            "place": "Маврово"
+        "name": "mavro",
+        "first_name": "Mavricie",
+        "second_name": "Mavrovskic",
+        "email": "nema@gmail.com",
+        "place": "Маврово"
         }
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * post
+ * Create an resource
  */
-class post_old
+class Create
 {
 	private $inp;
 	private $output;
@@ -52,7 +52,7 @@ class post_old
 			$sth->execute((array)($this->inp->attributes));
 			$temp =
 				$this->output = [];
-			$this->output['meta'] = [
+			$this->output = [
 				'OK' => true,
 				'count' => $sth->rowCount(),
 				'message' => "Inserted!",

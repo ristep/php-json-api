@@ -69,7 +69,7 @@ class getToken {
 					$token['auToken'] = $jwt;
 
 					$this->output = [];
-					$this->output['meta'] = [
+					$this->output = [
 						'OK' => true,
 						'error' => false,
 						'count' => $sth->rowCount(),
@@ -78,7 +78,7 @@ class getToken {
 					$this->output['data'] = $token;
 				}else{
 					$this->output = [];
-					$this->output['meta'] = [
+					$this->output = [
 						'OK' => false,
 						'error' => true,
 						'errorCode' => 401,

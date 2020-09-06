@@ -1,10 +1,11 @@
 <?php
 
 /**
- * patch
+ * Delete an resource 
  */
-class patch
+class Delete
 {
+
 	private $inp;
 	private $output;
 	private $conn;
@@ -15,7 +16,7 @@ class patch
 	 * @param $inp  [input object from post data]
 	 * @param $conn  [ PDO connection ]
 	 *
-	 * @return void
+	 * @return [this class]
 	 */
 	function __construct($inp, $conn)
 	{
@@ -30,28 +31,20 @@ class patch
 		];
 	}
 
-	/**
-	 * Method process
-	 *
-	 * @return this class
-	 */
 	public function process()
 	{
 		if (isset($this->inp->id)) {
 
-			$setArr = array();
-			foreach ($this->inp->attributes as $key => $val)
-				array_push($setArr, " $key=:$key");
-			$sth = $this->conn->prepare("UPDATE " . $this->inp->type . " SET " . implode(',', $setArr) . " WHERE `id` = :recordID ;");
+			$parArr = array();
+			$sth = $this->conn->prepare("DELETE FROM " . $this->inp->type . " WHERE `id` = :recordID ;");
 			try {
-				$parArr = (array)($this->inp->attributes);
 				$parArr['recordID'] = $this->inp->id;
 				$sth->execute($parArr);
 				$this->output = [];
-				$this->output['meta'] = [
+				$this->output = [
 					'OK' => true,
 					'count' => $sth->rowCount(),
-					'message' => "Patched!",
+					'message' => $sth->rowCount() . " deleted records!"
 				];
 			} catch (PDOException $e) {
 
@@ -60,7 +53,7 @@ class patch
 					'errorType' => 'DataBase',
 					'code' => 416,
 					'message' => "Data Base Error!",
-					'PDO' => $e
+					'PDO' => $e,
 				];
 			}
 		} else {
@@ -74,11 +67,10 @@ class patch
 	/**
 	 * Method result
 	 *
-	 * @return [resulting object]
+	 * @return [result object]
 	 */
 	public function result()
 	{
 		return ($this->output);
 	}
 }
-

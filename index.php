@@ -4,10 +4,10 @@ require "init.php";
 require "conn.php";
 
 $cn = new connection(
-  $servername = 'localhost',        // MySQL server address
-  $dbname     = "euro_spisok",      // database name
-  $username   = "es_admin",          // username
-  $password   = "oOWCN58udB24oGg8"  // password
+  $servername = 'localhost',       // MySQL server address
+  $dbname     = "foodb",        // database name
+  $username   = "api_test",        // username
+  $password   = "57RTt6kXjjC0uyKL" // password
 );
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -19,10 +19,10 @@ $input = json_decode($input);
 switch ($method) {
   case 'POST': // update, insert, delete and select 
 
-    $type = Key($input);
-    if (file_exists("./classes/$type.class.php")) {
-      require "./classes/$type.class.php";
-      $ret = (new $type($input->$type, $cn->conn))->process()->result();
+    $method = Key($input);
+    if (file_exists("./methods/$method.class.php")) {
+      require "./methods/$method.class.php";
+      $ret = (new $method($input->$method, $cn->conn))->process()->result();
     } else {
       $ret = (object)[
         'OK' => false,

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * get
+ * Get
  */
-class get
+class Get
 {
 	private $inp;
 	private $output;
@@ -39,8 +39,6 @@ class get
 		$data = [];
 		$parArr = [];
 		$fields = '*';
-		$pagination = '';
-		$sorting = '';
 		$where = " WHERE 1 ";
 		$table = $this->inp->type;
 
@@ -61,51 +59,19 @@ class get
 						$parArr[$key] = $val;
 					}
 					$where = "WHERE " . implode(' and ', $whereArr);
-				} else
-						if (isset($this->inp->filter)) {
-					if (is_string($this->inp->filter))
-						$where = "WHERE " . $this->inp->filter; // Security to do: SQL injection preventing
 				}
-
-				if (isset($this->inp->sort)) {
-					$sorting = " ORDER BY " . implode(',', $this->inp->sort);
-				}
-
-				if (isset($this->inp->page)) {
-					$parArr['limit']  = (int) $this->inp->page->limit;
-					$parArr['offset'] = (int) $this->inp->page->offset;
-					$pagination = "LIMIT :limit OFFSET :offset";
-					$this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-				}
-
-				$sth = $this->conn->prepare("SELECT $fields FROM $table $where $sorting $pagination;");
+				$sth = $this->conn->prepare("SELECT $fields FROM $table $where;");
 			}
 
 			try {
 				$sth->execute($parArr);
-				if (isset($this->inp->id))
-					$result = $sth->fetch(PDO::FETCH_OBJ);
-				else
-					$result = $sth->fetchAll(PDO::FETCH_OBJ);
+				$result = $sth->fetch(PDO::FETCH_OBJ);
 
 				$this->output = [];
 
-				if (is_array($result))
-					foreach ($result as $row) {
-						$dt['type'] = $this->inp->type;
-						if (isset($row->id))
-							$dt['id'] = $row->id;
-						unset($row->id);
-						$dt['attributes'] = $row;
-						array_push($data, $dt);
-					}
-				else {
-					$data['type'] = $this->inp->type;
-					$data['id'] = $this->inp->id;
-					$data['attributes'] = $result;
-				}
+				$data = $result;
 
-				$this->output['meta'] = [
+				$this->output = [
 					'OK' => true,
 					'count' => $sth->rowCount(),
 				];
