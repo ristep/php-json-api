@@ -3,7 +3,7 @@
 /**
  * get
  */
-class Meta
+class Count
 {
 	private $inp;
 	private $output;
@@ -41,27 +41,14 @@ class Meta
 
 		try {
   
-      $sth = $this->conn->prepare("SHOW FULL COLUMNS FROM ".$this->inp->type.";" );
-			$sth->execute();
-			$result = $sth->fetchAll(PDO::FETCH_OBJ);
-      $fieldCount = $sth->rowCount();
-
       $sth = $this->conn->prepare("SELECT count(1) as recordCount FROM ".$this->inp->type.";" );
 			$sth->execute();
 			$count = $sth->fetchAll(PDO::FETCH_COLUMN);
 
-			$this->output = [];
-
-			foreach ($result as $row) {
-					array_push($data, $row);
-				}
-
 			$this->output = [
 				'OK' => true,
-        'fieldsCount' => $fieldCount,
-        'recordCount' => $count[0]
+        'count' => $count[0]
 			];
-			$this->output['data'] = $data;
 		} catch (PDOException $e) {
 
 			$this->output = [
