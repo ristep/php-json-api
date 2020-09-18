@@ -63,6 +63,8 @@ class Listing
 				foreach($this->inp->filter->params as $key => $val) 
 					$parArr[$key] = $val;
 			}	
+		} elseif (isset($this->inp->search)){
+				// to be done some time in the future if needed 
 		}
 
 		if (isset($this->inp->sort)) {
@@ -76,9 +78,9 @@ class Listing
 			$this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		}
 
-		$sth = $this->conn->prepare("SELECT $fields FROM $table $where $sorting $pagination;");
-
 		try {
+
+			$sth = $this->conn->prepare("SELECT $fields FROM $table $where $sorting $pagination;");
 			$sth->execute($parArr);
 			$result = $sth->fetchAll(PDO::FETCH_OBJ);
 	
