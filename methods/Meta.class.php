@@ -65,10 +65,10 @@ class Meta
 
 			$this->output = [
 				'OK' => true,
-        'fieldsCount' => $fieldCount,
-        'recordCount' => $count
+        'recordCount' => $count,
+        'fieldsCount' => $fieldCount
 			];
-			$this->output['dataTypes'] = $result;
+			$this->output['fieldTypes'] = $result;
 		} catch (PDOException $e) {
 
 			$this->output = [

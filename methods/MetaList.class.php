@@ -3,7 +3,7 @@
 /**
  * get
  */
-class Listing
+class MetaList
 {
 	private $inp;
 	private $output;
@@ -43,7 +43,8 @@ class Listing
 		$sorting = '';
 		$where = " WHERE 1 ";
 		$table = $this->inp->type;
-		$whereArr = [];
+    $whereArr = [];
+    $filterArr = [];
 
 		if (isset($this->inp->attributes)) {
 			$fields =	implode(',', $this->inp->attributes);
@@ -60,8 +61,10 @@ class Listing
 				$where = "WHERE " . $this->inp->filter; 
 			}elseif(is_object($this->inp->filter)){ // Security to do: SQL injection preventing, safe escaping $this->inp->filter->template
 				$where = 	"WHERE " . $this->inp->filter->template;
-				foreach($this->inp->filter->params as $key => $val) 
-					$parArr[$key] = $val;
+				foreach($this->inp->filter->params as $key => $val){ 
+          $parArr[$key] = $val;
+          $filterArr[$key] = $val;
+        }
 			}	
 		} elseif (isset($this->inp->search)){
 				// to be done some time in the future if needed 
@@ -80,6 +83,17 @@ class Listing
 
 		try {
 
+      $sth = $this->conn->prepare("SHOW FULL COLUMNS FROM $table;" );
+			$sth->execute();
+			$fieldTypes = $sth->fetch(PDO::FETCH_OBJ);
+      $fieldCount = $sth->rowCount();
+
+      $sth = $this->conn->prepare("SELECT count(1) as recordCount FROM $table $where;" );
+      // echo "SELECT count(1) as recordCount FROM $table $where;";
+      // print_r($filterArr);
+			$sth->execute($filterArr);
+			$recordCount = $sth->fetch(PDO::FETCH_COLUMN);
+
 			$sth = $this->conn->prepare("SELECT $fields FROM $table $where $sorting $pagination;");
 			$sth->execute($parArr);
 			$result = $sth->fetchAll(PDO::FETCH_OBJ);
@@ -92,7 +106,10 @@ class Listing
 
 			$this->output = [
 				'OK' => true,
-				'count' => count($data),
+        'count' => count($data),
+        'recordCount' => $recordCount,
+        'fieldCount' => $fieldCount,
+        'fieldTypes' => $fieldTypes
 			];
 			if (isset($this->inp->key)) 
 				$this->output['key'] = $this->inp->key;
