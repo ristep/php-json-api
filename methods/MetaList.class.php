@@ -89,8 +89,6 @@ class MetaList
       $fieldCount = $sth->rowCount();
 
       $sth = $this->conn->prepare("SELECT count(1) as recordCount FROM $table $where;" );
-      // echo "SELECT count(1) as recordCount FROM $table $where;";
-      // print_r($filterArr);
 			$sth->execute($filterArr);
 			$recordCount = $sth->fetch(PDO::FETCH_COLUMN);
 
