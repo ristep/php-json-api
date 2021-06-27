@@ -73,7 +73,9 @@ class getToken {
 						'OK' => true,
 						'error' => false,
 						'count' => $sth->rowCount(),
-						'message' => "User record found! User password OK! UserToken generated!",
+						'message' => "UserToken generated!",
+						'message2' => "User password OK! ",
+						'message3' => "User record found!"
 					];
 					$this->output['data'] = $token;
 				}else{
@@ -83,7 +85,9 @@ class getToken {
 						'error' => true,
 						'errorCode' => 401,
 						'count' => 0,
-						'message' => "Wrong username or password!!! Cant get UserToken!",
+						'message' => "Wrong username or password!!!",
+						'message2' => "Can't generate UserToken!",
+						'message3' => "Login failed!"
 					];
 					$this->output['data'] = false;
 				}

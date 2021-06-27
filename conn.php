@@ -14,7 +14,7 @@ class connection{
 			$servername,	// MySQL server address
 			$dbname,      // database name
 			$username,		// username
-			$password  		// password
+			$password 		// password
 	){
 		try {
 			$this->conn = new PDO( "mysql:host=$servername;charset=utf8mb4;dbname=$dbname", $username, $password );
