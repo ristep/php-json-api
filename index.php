@@ -4,16 +4,16 @@ require "init.php";
 require "conn.php";
 
 $cn = new connection(
-  $servername = 'localhost',       // MySQL server address
-  $dbname     = "foodb",        // database name
-  $username   = "api_test",        // username
-  $password   = "57RTt6kXjjC0uyKL" // password
+  $servername = 'localhost',        // MySQL server address
+  $dbname     = "api_test",         // database name
+  $username   = "api_test",         // username
+  $password   = "57RTt6kXjjC0uyKL"  // password
 );
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 $input  = file_get_contents("php://input");
-//file_put_contents('inputDump.txt', $input, FILE_APPEND); // uncomment for debugging
+// file_put_contents('inputDump.json', $input.";", FILE_APPEND); // uncomment for debugging
 $input = json_decode($input);
 
 switch ($method) {

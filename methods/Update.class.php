@@ -30,7 +30,7 @@ class Update
 		];
 	}
 
-	/**
+	/**  
 	 * Method process
 	 *
 	 * @return this class
@@ -43,9 +43,13 @@ class Update
 			foreach ($this->inp->attributes as $key => $val)
 				array_push($setArr, " $key=:$key");
 			$sth = $this->conn->prepare("UPDATE " . $this->inp->type . " SET " . implode(',', $setArr) . " WHERE `id` = :recordID ;");
+
 			try {
 				$parArr = (array)($this->inp->attributes);
 				$parArr['recordID'] = $this->inp->id;
+				
+				// file_put_contents('inputDump.json', implode(",",$parArr), FILE_APPEND); // uncomment for debugging
+
 				$sth->execute($parArr);
 				$this->output = [];
 				$this->output = [
