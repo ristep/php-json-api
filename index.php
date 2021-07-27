@@ -3,12 +3,19 @@
 require "init.php";
 require "conn.php";
 
-$cn = new connection(
+$cn = new connection( // for Aruba VPN
   $servername = 'localhost',       // MySQL server address
-  $dbname     = "foodb",           // database name
+  $dbname     = "foodb-api-test",  // database name
   $username   = "api_test",        // username
   $password   = "57RTt6kXjjC0uyKL" // password
 );
+
+// $cn = new connection( // For local host dev
+//   $servername = 'localhost',       // MySQL server address
+//   $dbname     = "foodb",  // database name
+//   $username   = "api_test",        // username
+//   $password   = "57RTt6kXjjC0uyKL" // password
+// );
 
 $method = $_SERVER['REQUEST_METHOD'];
 
