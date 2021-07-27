@@ -5,7 +5,7 @@ require "conn.php";
 
 $cn = new connection(
   $servername = 'localhost',       // MySQL server address
-  $dbname     = "foodb",        // database name
+  $dbname     = "foodb",           // database name
   $username   = "api_test",        // username
   $password   = "57RTt6kXjjC0uyKL" // password
 );
