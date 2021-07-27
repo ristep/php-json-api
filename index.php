@@ -13,7 +13,7 @@ $cn = new connection(
 $method = $_SERVER['REQUEST_METHOD'];
 
 $input  = file_get_contents("php://input");
-//file_put_contents('inputDump.txt', $input, FILE_APPEND); // uncomment for debugging
+// file_put_contents('inputDump.json', $input.";", FILE_APPEND); // uncomment for debugging
 $input = json_decode($input);
 
 switch ($method) {
