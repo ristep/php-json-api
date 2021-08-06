@@ -5,7 +5,7 @@ require "conn.php";
 
 $cn = new connection( // for Aruba VPN
   $servername = 'localhost',       // MySQL server address
-  $dbname     = "foodb-api-test",  // database name
+  $dbname     = "api-test",  // database name
   $username   = "api_test",        // username
   $password   = "57RTt6kXjjC0uyKL" // password
 );
@@ -20,11 +20,11 @@ $cn = new connection( // for Aruba VPN
 $method = $_SERVER['REQUEST_METHOD'];
 
 $input  = file_get_contents("php://input");
-// file_put_contents('inputDump.json', $input.";", FILE_APPEND); // uncomment for debugging
 $input = json_decode($input);
 
 switch ($method) {
   case 'POST': // update, insert, delete and select 
+// file_put_contents('inputDump.json', $input.";", FILE_APPEND); // uncomment for debugging
 
     $method = Key($input);
     if (file_exists("./methods/$method.class.php")) {

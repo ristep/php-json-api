@@ -37,10 +37,12 @@ class getToken {
 	 * @return [this object]
 	 */
 	public function process(){
+		
 		if(isset($this->inp->username) && isset($this->inp->password) ){
 			
 			$parArr = [];
 			$sth = $this->conn->prepare("select id,name,email,first_name,second_name,role FROM `users`  WHERE name = :username and password = :password;");
+			//file_put_contents('inputDump.json', "select id,name,email,first_name,second_name,role FROM `users`  WHERE name = :username and password = :password;", FILE_APPEND); // uncomment for debugging
 			try{
 				$parArr['password'] = $this->inp->password;
 				$parArr['username'] = $this->inp->username;
