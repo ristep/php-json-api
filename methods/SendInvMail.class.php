@@ -37,27 +37,43 @@ class SendInvMail
 	public function process()
 	{
 		$data = [];
-		$parArr = []; 
-		$where = '';
-    
-
+   
 		if (isset($this->inp->email)) {
-				$where = "WHERE users.email='".$this->inp->email."'"; 
-		}	
-		// file_put_contents('inputDump.json',"SELECT count(1) as recordCount FROM users $where;" , FILE_APPEND);
+				$email = $this->inp->email;
+				$username = $this->inp->username;
+				$password = $this->inp->password;
+		}else{
+			$this->output["message"]  = "Attribute email must be specified!!";
+			$this->output["errorType"] = "Missing email addres!";
+			$this->output["code"] = 528;
+			return $this;
+		}
+
+		// file_put_contents('inputDump.json',json_encode($parArr) , FILE_APPEND);
 		try {
   
-      $sth = $this->conn->prepare("SELECT count(1) as recordCount FROM users $where;" );
-			$sth->execute($parArr);
+      $sth = $this->conn->prepare("SELECT count(1) as recordCount FROM `users` WHERE `email`=:email" );
+			$sth->execute([ ':email' => $email ]);
 			$count = $sth->fetch(PDO::FETCH_COLUMN);
+// file_put_contents('inputDump.json', "Prvo OK" , FILE_APPEND);
 			if( $count > 0 ){
-				$sth = $this->conn->prepare("UPDATE users SET remember_token = UUID(), token_ts = CURRENT_TIMESTAMP $where");
-				$sth->execute($parArr);
+				$sth = $this->conn->prepare("UPDATE users SET remember_token = UUID(), token_ts = CURRENT_TIMESTAMP WHERE users.email=:email");
+				$sth->execute([ ':email' => $email ]);
+			}else{
+				$sth = $this->conn->prepare("INSERT INTO users( email, remember_token, token_ts, name, password ) values( :email , UUID(), CURRENT_TIMESTAMP, :username, :password)");
+				$sth->execute([ 
+					':email' => $email, 
+					':username' => $username,
+					':password' => $password
+				]);
 			}
+// file_put_contents('inputDump.json', "Vtoro Tamam" , FILE_APPEND);
 
-			$sth = $this->conn->prepare("SELECT remember_token as token FROM users $where;" );
-			$sth->execute($parArr);
+			$sth = $this->conn->prepare("SELECT remember_token as token FROM users WHERE users.email=:email" );
+			$sth->execute([ ':email' => $this->inp->email ]);
 			$this->rs_token = $sth->fetch(PDO::FETCH_COLUMN);
+
+// file_put_contents('inputDump.json', "Treto OK" , FILE_APPEND);
 
 			$this->output = [
 				'OK' => true,
@@ -75,7 +91,8 @@ class SendInvMail
 				'errorType' => 'DataBase',
 				'code' => 416,
 				'message' => "Data Base Error!",
-				'PDO' => $e,
+				'sql' => $sth,
+				'PDO' => $e
 			];
 		}
 		return $this;
