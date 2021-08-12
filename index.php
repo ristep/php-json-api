@@ -24,7 +24,8 @@ $input = json_decode($input);
 
 switch ($method) {
   case 'POST': // update, insert, delete and select 
-// file_put_contents('inputDump.json', $input.";", FILE_APPEND); // uncomment for debugging
+
+    // file_put_contents('inputDump.json', $input.";", FILE_APPEND); // uncomment for debugging
 
     $method = Key($input);
     if (file_exists("./methods/$method.class.php")) {
@@ -34,7 +35,7 @@ switch ($method) {
       $ret = (object)[
         'OK' => false,
         'error' => true,
-        'message' => "Undefined Request Method !!!",
+        'message' => "Undefined Request Method !!!???",
         'data' => false
       ];
     };
