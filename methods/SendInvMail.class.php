@@ -108,13 +108,15 @@ class SendInvMail
 		$to      =  $this->output['email'];
 		$subject = 'New user, or new password';
 		$message = 'Click on this link for password reset or create new user: https://arso.us.to:3000/#/user_reset/'.$this->rs_token;
-		$headers = 'From: webmaster@smanzy.cloud' . "\r\n" .
-    'Reply-To: webmaster@smanzy.cloud' . "\r\n" .
-    'X-Mailer: PHP/' . phpversion();
+		$headers = array(
+    		'From' => 'mailer_robot@sman.cloud',
+    		'Reply-To' => 'no_reply',
+    		'X-Mailer' => 'PHP/' . phpversion()
+			);
 
 		$send = mail($to, $subject, $message, $headers);
 
-		// file_put_contents('inputDump.json',  , FILE_APPEND);
+		file_put_contents('inputDump.json',($send ? "Accepted" : "Rejected")." to: ".$to  , FILE_APPEND);
 	
 		return ($this->output);
 	}
