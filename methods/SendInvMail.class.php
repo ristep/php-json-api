@@ -42,6 +42,7 @@ class SendInvMail
 				$email = $this->inp->email;
 				$username = $this->inp->username;
 				$password = $this->inp->password;
+				$clientURL = $this->inp->clientURL;
 		}else{
 			$this->output["message"]  = "Attribute email must be specified!!";
 			$this->output["errorType"] = "Missing email addres!";
@@ -81,6 +82,7 @@ class SendInvMail
 				'email' => $this->inp->email,
 				'username' => $this->inp->username,
 				'password' => $this->inp->password,
+				'clientURL' => $this->inp->clientURL,
 				// 'token'    => $this->rs_token, // only for debuging
 				'siteMessage' => $this->inp->siteMessage 
 			];
@@ -106,17 +108,18 @@ class SendInvMail
 	public function result()
 	{
 		$to      =  $this->output['email'];
+		$clientURL = $this->output['clientURL'];
 		$subject = 'New user, or new password';
-		$message = 'Click on this link for password reset or create new user: https://arso.us.to:3000/#/user_reset/'.$this->rs_token;
+		$message = 'Click on this link for password reset or create new user: '.$clientURL.'/new_user/'.$this->rs_token;
 		$headers = array(
-    		'From' => 'mailer_robot@sman.cloud',
+    		'From' => 'smanzy_mailer_robot@sman.cloud',
     		'Reply-To' => 'no_reply',
     		'X-Mailer' => 'PHP/' . phpversion()
 			);
 
 		$send = mail($to, $subject, $message, $headers);
 
-		file_put_contents('inputDump.json',($send ? "Accepted" : "Rejected")." to: ".$to  , FILE_APPEND);
+		// file_put_contents('inputDump.json',($send ? "Accepted" : "Rejected")." to: ".$clientURL  , FILE_APPEND);
 	
 		return ($this->output);
 	}

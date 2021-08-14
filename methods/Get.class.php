@@ -61,6 +61,7 @@ class Get
 					$where = "WHERE " . implode(' and ', $whereArr);
 				}
 				$sth = $this->conn->prepare("SELECT $fields FROM $table $where;");
+				// file_put_contents('inputDump.json', "SELECT $fields FROM $table $where;" , FILE_APPEND); // debuging
 			}
 
 			try {
