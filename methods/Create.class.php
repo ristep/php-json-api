@@ -46,7 +46,7 @@ class Create
 			array_push($parArr, ':' . $key);
 		}
 		$sth = $this->conn->prepare("INSERT INTO " . $this->inp->type . "(" . implode(',', $atrArr) . ") VALUES(" . implode(',', $parArr) . ");");
-
+		// file_put_contents('inputDump.json', implode(';',(array)($this->inp->attributes)), FILE_APPEND); // uncomment for debugging
 		try {
 
 			$sth->execute((array)($this->inp->attributes));

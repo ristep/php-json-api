@@ -5,9 +5,9 @@ require "conn.php";
 
 $cn = new connection( // for Aruba VPN
   $servername = 'localhost',       // MySQL server address
-  $dbname     = "api-test",  // database name
-  $username   = "api_test",        // username
-  $password   = "57RTt6kXjjC0uyKL" // password
+  $dbname     = "bmi_log",  // database name
+  $username   = "bmi_log",        // username
+  $password   = "HKwkeExFNE8H3u7S" // password
 );
 
 // $cn = new connection( // For local host dev

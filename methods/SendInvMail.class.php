@@ -56,7 +56,7 @@ class SendInvMail
       $sth = $this->conn->prepare("SELECT count(1) as recordCount FROM `users` WHERE `email`=:email" );
 			$sth->execute([ ':email' => $email ]);
 			$count = $sth->fetch(PDO::FETCH_COLUMN);
-// file_put_contents('inputDump.json', "Prvo OK" , FILE_APPEND);
+//  file_put_contents('inputDump.json', "Prvo OK" , FILE_APPEND);
 			if( $count > 0 ){
 				$sth = $this->conn->prepare("UPDATE users SET remember_token = UUID(), token_ts = CURRENT_TIMESTAMP WHERE users.email=:email");
 				$sth->execute([ ':email' => $email ]);
@@ -68,13 +68,13 @@ class SendInvMail
 					':password' => $password
 				]);
 			}
-// file_put_contents('inputDump.json', "Vtoro Tamam" , FILE_APPEND);
+//  file_put_contents('inputDump.json', "Vtoro Tamam" , FILE_APPEND);
 
 			$sth = $this->conn->prepare("SELECT remember_token as token FROM users WHERE users.email=:email" );
 			$sth->execute([ ':email' => $this->inp->email ]);
 			$this->rs_token = $sth->fetch(PDO::FETCH_COLUMN);
 
-// file_put_contents('inputDump.json', "Treto OK" , FILE_APPEND);
+//  file_put_contents('inputDump.json', "Treto OK" , FILE_APPEND);
 
 			$this->output = [
 				'OK' => true,
