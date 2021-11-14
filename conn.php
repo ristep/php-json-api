@@ -12,7 +12,7 @@ class connection{
 	 */
 	function __construct( 
 			$servername,	// MySQL server address
-			$dbname,      // database name
+			$dbname,       // database name
 			$username,		// username
 			$password  		// password
 	){
